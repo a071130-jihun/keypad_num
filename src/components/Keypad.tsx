@@ -1,11 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNumber } from '@/context/NumberContext';
 
 export default function Keypad() {
   const [inputValue, setInputValue] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { setConfirmedNumber } = useNumber();
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    };
+    
+    checkDarkMode();
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', checkDarkMode);
+    
+    return () => mediaQuery.removeEventListener('change', checkDarkMode);
+  }, []);
 
   const handleNumberClick = (num: string) => {
     setInputValue(prev => prev + num);
@@ -40,18 +53,20 @@ export default function Keypad() {
     }
   };
 
-  const buttonStyle = {
+  const buttonStyle: React.CSSProperties = {
     width: '80px',
     height: '80px',
     fontSize: '24px',
     margin: '5px',
     cursor: 'pointer',
-    backgroundColor: '#f0f0f0',
-    border: '1px solid #ccc',
+    backgroundColor: isDarkMode ? '#2a2a2a' : '#f0f0f0',
+    color: isDarkMode ? '#ffffff' : '#000000',
+    border: `1px solid ${isDarkMode ? '#4a4a4a' : '#ccc'}`,
     borderRadius: '8px',
+    transition: 'all 0.2s ease',
   };
 
-  const confirmButtonStyle = {
+  const confirmButtonStyle: React.CSSProperties = {
     ...buttonStyle,
     backgroundColor: '#4CAF50',
     color: 'white',
@@ -71,7 +86,9 @@ export default function Keypad() {
           marginBottom: '20px',
           width: '300px',
           textAlign: 'center',
-          border: '2px solid #ccc',
+          backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff',
+          color: isDarkMode ? '#ffffff' : '#000000',
+          border: `2px solid ${isDarkMode ? '#4a4a4a' : '#ccc'}`,
           borderRadius: '8px',
         }}
       />

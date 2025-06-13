@@ -4,6 +4,19 @@ import { useState, useEffect } from 'react';
 
 export default function DisplayPage() {
   const [number, setNumber] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    };
+    
+    checkDarkMode();
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', checkDarkMode);
+    
+    return () => mediaQuery.removeEventListener('change', checkDarkMode);
+  }, []);
 
   useEffect(() => {
     const fetchNumber = async () => {
@@ -24,5 +37,18 @@ export default function DisplayPage() {
     return () => clearInterval(interval);
   }, []);
 
-  return <>{number}</>;
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: '48px',
+      fontWeight: 'bold',
+      color: isDarkMode ? '#ffffff' : '#000000',
+      backgroundColor: isDarkMode ? '#0a0a0a' : '#ffffff',
+    }}>
+      {number}
+    </div>
+  );
 }

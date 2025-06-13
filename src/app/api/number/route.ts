@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const { number } = await request.json();
     savedNumber = number;
     return NextResponse.json({ success: true, number: savedNumber });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, error: 'Failed to save number' }, { status: 500 });
   }
 }

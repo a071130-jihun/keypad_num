@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useNumber } from '@/context/NumberContext';
 
-export default function Keypad() {
+interface KeypadProps {
+  pageId?: string;
+}
+
+export default function Keypad({ pageId }: KeypadProps) {
   const [inputValue, setInputValue] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { setConfirmedNumber } = useNumber();
@@ -34,21 +38,41 @@ export default function Keypad() {
 
   const handleConfirm = async () => {
     if (inputValue) {
-      try {
-        const response = await fetch('/api/number', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ number: inputValue }),
-        });
-        
-        if (response.ok) {
-          setConfirmedNumber(inputValue);
-          alert('숫자가 저장되었습니다!');
+      if (pageId) {
+        try {
+          const response = await fetch(`/api/pages/${pageId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ number: inputValue }),
+          });
+          
+          if (response.ok) {
+            alert(`Page ${pageId}에 숫자가 저장되었습니다!`);
+            setInputValue('');
+          }
+        } catch (error) {
+          console.error('Error saving number:', error);
+          alert('저장 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('Error saving number:', error);
+      } else {
+        try {
+          const response = await fetch('/api/number', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ number: inputValue }),
+          });
+          
+          if (response.ok) {
+            setConfirmedNumber(inputValue);
+            alert('숫자가 저장되었습니다!');
+          }
+        } catch (error) {
+          console.error('Error saving number:', error);
+        }
       }
     }
   };

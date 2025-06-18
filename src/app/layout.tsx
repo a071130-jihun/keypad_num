@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { NumberProvider } from "@/context/NumberContext";
+import { PageNumberProvider } from "@/context/PageNumberContext";
 
 export const metadata: Metadata = {
   title: "Keypad App",
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NumberProvider>
-          {children}
+          <PageNumberProvider>
+            {children}
+          </PageNumberProvider>
         </NumberProvider>
       </body>
     </html>
